@@ -184,6 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //取り敢えず豊橋駅に視点を写している
         // Add a marker in Sydney and move the camera
         LatLng ToyohashiStation = new LatLng(34.7628819, 137.3819014);
         //mMap.addMarker(new MarkerOptions().position(ToyohashiStation).title("ToyohashiStation"));
