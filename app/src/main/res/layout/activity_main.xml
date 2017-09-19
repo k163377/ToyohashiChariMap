@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.doubutsunoyakata.toyohashicharimap.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="input" />
+
+        <Button
+            android:id="@+id/Serch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="serch"/>
+
+        <Button
+            android:id="@+id/Upload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload"/>
+
+        <Button
+            android:id="@+id/History"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="history"/>
+
+    </LinearLayout>
+</ScrollView>
