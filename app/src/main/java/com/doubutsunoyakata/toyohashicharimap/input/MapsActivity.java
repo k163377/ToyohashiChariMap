@@ -41,6 +41,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     final int INTERVAL_PERIOD = 5000;//インターバル
     Timer timer = null;
 
+    //レイアウト
+    Button button;
+    boolean isRecording = false;
+
     //データ
     ReviewData rd;
 
@@ -71,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
-
+        //一定時間ごとに
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
@@ -128,7 +132,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //ModeButton = (Button) findViewById(R.id.ModeButton);
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(!isRecording){
+                    startRecording();
+                    button.setText("StopRecording");
+                    isRecording = true;
+                } else {
+                    stopRecording();
+                    button.setText("StartRecording");
+                    isRecording = false;
+                }
+            }
+        });
         /*ModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,25 +187,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("Timer", "onDestroy");
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
     //マップ関連
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //取り敢えず豊橋駅に視点を写している
-        // Add a marker in Sydney and move the camera
-        LatLng ToyohashiStation = new LatLng(34.7628819, 137.3819014);
-        //mMap.addMarker(new MarkerOptions().position(ToyohashiStation).title("ToyohashiStation"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ToyohashiStation, 15));
+        Location l = getLastKnownLocation();
+        LatLng p;
+
+        if(l != null){
+            p = new LatLng(l.getLatitude(), l.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p, 15));
+        }else{
+            //取れなかったら豊橋駅に視点を移す
+            p = new LatLng(34.7628819, 137.3819014);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p, 15));
+        }
     }
 }
