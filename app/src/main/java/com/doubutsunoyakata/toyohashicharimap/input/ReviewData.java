@@ -1,6 +1,8 @@
 package com.doubutsunoyakata.toyohashicharimap.input;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.Activity;
 
@@ -22,6 +24,7 @@ public final class ReviewData implements Serializable{
 
     private final String dataID;//レビューデータの識別子、データを格納するファイル名としても利用する予定
     private final ArrayList<LatLng> latLngArray;//座標の行列
+    private final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
 
@@ -30,6 +33,7 @@ public final class ReviewData implements Serializable{
     //プログラムから呼び出す方のコンストラクタ
     public ReviewData(String name){
         latLngArray = new ArrayList<LatLng>();
+        markerArray = new ArrayList<MarkerOptions>();
         currentIndex = 0;
         date = new Date( System.currentTimeMillis());//現在時間を取得
         dataID = name + "_" + df.format(date);
@@ -43,6 +47,7 @@ public final class ReviewData implements Serializable{
         ReviewData rd = inputDeserialize( activity, dataID);
         this.dataID = rd.dataID;
         this.latLngArray = rd.latLngArray;
+        this.markerArray = rd.markerArray;
         this.currentIndex = rd.currentIndex;
         this.date = rd.date;
     }
@@ -61,17 +66,39 @@ public final class ReviewData implements Serializable{
         System.out.println(plo.toString());
         return plo;
     }
+    public ArrayList<MarkerOptions> getMarkerOptions(){
+        if(currentIndex == 0) return null;
+        ArrayList<MarkerOptions> mo = new ArrayList<MarkerOptions>();
+        for(int i = 0; i < currentIndex; i++) mo.add(markerArray.get(i));
+        return mo;
+    }
     public int getCurrentIndex(){ return currentIndex; }
 
     //セッター
     public void addLatLng(LatLng p){
-        latLngArray.add( currentIndex++, p);
+        MarkerOptions m = new MarkerOptions();
+        m.position(p);
+        latLngArray.add(currentIndex, p);
+        markerArray.add(currentIndex++, m);
     }
 
     //インデックスのアンドゥ
-    public void undoCurrentIndex(){ if(0 < currentIndex) currentIndex--; }
+    public void undoCurrentIndex(){
+        if(0 < currentIndex){
+            currentIndex--;
+        }
+    }
     //インデックスのリドゥ
-    public void redoCurrentIndex(){ if(currentIndex < latLngArray.size()) currentIndex++; }
+    public void redoCurrentIndex(){
+        if(currentIndex < latLngArray.size()){
+            currentIndex++;
+        }
+    }
+
+    //latLngArrayのサイズ取得
+    public int getLatLngSize(){
+        return latLngArray.size();
+    }
 
     /**
      * 自身をシリアライズしてファイルへと出力
