@@ -154,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
                 dialog.show();
             }
-        });*/
+        });
 
         //undoボタンの処理
         undo = (Button) findViewById(R.id.UndoButton);
