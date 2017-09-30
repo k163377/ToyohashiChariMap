@@ -18,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.k163377.mapapptest.MapsActivity"
-        android:layout_centerInParent="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
