@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,7 +47,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //レイアウト
     Button ConfirmButton;
 
+    Button undo, redo;
+    public int f = 1;
+
+    //Polylineの再描画用(描画時に毎回deleteするために前回のpolyline情報を格納しておく)
+    private Polyline lastPolyLine = null;
+    //markerの保存用ArrayList
+    private MarkerOptions lastMarker = null;
+
     //データ
+    //ReviewData rd = new ReviewData("test");
     ReviewData rd;
 
     //現在地を取得する関数
@@ -144,7 +154,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
                 dialog.show();
             }
+        });*/
+
+        //undoボタンの処理
+        undo = (Button) findViewById(R.id.UndoButton);
+        undo.setEnabled(false); //最初は何もしていないので，ボタン利用不可にしてある
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //currentIndexのundo操作
+                rd.undoCurrentIndex();
+                //最後に描画した直線の削除
+                if(lastPolyLine != null){
+                    lastPolyLine.remove();
+                }
+                //mapのクリア(最後に付けたマーカの削除)
+                mMap.clear();
+                //currentIndexが0まで戻したら，これ以上戻れないのでボタンを利用不可にする
+                if(rd.getCurrentIndex() != 0) {
+                    //マーカの再描画
+                    for (MarkerOptions mo : rd.getMarkerOptions()) {
+                        mMap.addMarker(mo);
+                    }
+                    //マーカを再接続(直線の描画)
+                    if (rd.getCurrentIndex() < 2) {
+                        lastPolyLine = null;    //マーカの地点が2つ以上ないと結べないので，nullを入れてある
+                    } else {
+                        lastPolyLine = mMap.addPolyline(rd.getPolylineOptions());
+                    }
+                }else{
+                    undo.setEnabled(false);
+                }
+                //redoボタンを利用可能にする
+                redo.setEnabled(true);
+            }
         });
+
+        //redoボタンの処理
+        redo = (Button) findViewById(R.id.RedoButton);
+        redo.setEnabled(false); //最初は何もしていないので，ボタン利用不可にしてある
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //currentIndexのredo操作
+                rd.redoCurrentIndex();
+                //mapのクリア(一度リセットしてから再描画，もしかしたら不要？)
+                mMap.clear();
+                //マーカの再描画
+                for (MarkerOptions mo : rd.getMarkerOptions()) {
+                    mMap.addMarker(mo);
+                }
+                //マーカ同士の再接続
+                if (rd.getCurrentIndex() < 2) {
+                    lastPolyLine = null;
+                } else {
+                    lastPolyLine = mMap.addPolyline(rd.getPolylineOptions());
+                }
+                //最後までredoしたら，ボタンを利用不可にしている
+                if(rd.getCurrentIndex() == rd.getLatLngSize()){
+                    redo.setEnabled(false);
+                }
+                //undoボタンを利用可能にする
+                undo.setEnabled(true);
+            }
+        });
+
+
+
+        //rd = new ReviewData("Dummy ID");
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     }
@@ -161,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        rd = new ReviewData("test");
+
 
         Location l = getLastKnownLocation();
         LatLng p;
@@ -181,13 +258,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions options = new MarkerOptions();
                 @Override
                 public void onMapClick(LatLng point) {
-                    // TODO Auto-generated method stub
-                    options.position(point);
-                    options.title("テストMaker");
-                    options.snippet(String.valueOf(point.latitude)+","+String.valueOf(point.longitude));
-                    mMap.addMarker(options);
+                    //タップ後にundoのボタンを利用可能にする
+                    undo.setEnabled(true);
+                    //undo後にタップしたら，redoできないようにする．
+                    redo.setEnabled(false);
+                    //座標情報をReviewDataへ登録
                     rd.addLatLng(point);
 
+                    //マーカを地図上に描画
+                    for(MarkerOptions mo : rd.getMarkerOptions()){
+                        mMap.addMarker(mo);
+                    }
+                    //選択した地点を線で結ぶ
+                    PolylineOptions polyOptions = rd.getPolylineOptions();
+                    if(polyOptions != null) {
+                        //lastPolyLineは，一番最後に描画した直線
+                        //これを保存しておくことで，undoで直線を削除できる
+                        lastPolyLine = mMap.addPolyline(polyOptions);
+                    }
                 }
             });
         }
