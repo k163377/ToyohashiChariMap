@@ -124,7 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        rd = new ReviewData("Dummy ID");
+        rd = new ReviewData("DummyID");
 
         ConfirmButton = (Button) findViewById(R.id.ConfirmButton);
         ConfirmButton.setOnClickListener(new View.OnClickListener(){
@@ -149,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onClick(DialogInterface dialog, int whichButton){
                         //後で関数として書き換え
                         rd.setReview(editView.getText().toString());
-                        //rd.outputSerialize(MapsActivity.this);
+                        rd.outputSerialize(MapsActivity.this);
                     }
                 });
                 dialog.show();
