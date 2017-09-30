@@ -25,7 +25,6 @@ public final class ReviewData implements Serializable{
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
 
-    private double time;//経過時間の計測
     private static final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//時刻用フォーマット
 
     //プログラムから呼び出す方のコンストラクタ
