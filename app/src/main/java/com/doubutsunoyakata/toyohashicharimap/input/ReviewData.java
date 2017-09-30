@@ -11,27 +11,34 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static android.content.Context.MODE_APPEND;
 import static android.content.Context.MODE_PRIVATE;
+import static java.lang.System.out;
 
 public final class ReviewData implements Serializable{
     private static final long serialVersionUID = 6255752248513019207L;
 
     private final String dataID;//レビューデータの識別子、データを格納するファイル名としても利用する予定
-    private final ArrayList<LatLng> latLngArray;//座標の行列
-    private final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
+    // transientをつけると、シリアライズ時に保存されない
+    // シリアライズの確認用でとりあえず入れているが、保存方法を考えないといけない...
+    private transient final ArrayList<LatLng> latLngArray;//座標の行列
+    private transient final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
     private String review = null; //レビューの内容
 
-    private static final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//時刻用フォーマット
+    // "/"が入るとディレクトリとして処理されてしまい、エラーとなるので"-"で区切るようにした
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");//時刻用フォーマット
 
-    //プログラムから呼び出す方のコンストラクタ
+     //プログラムから呼び出す方のコンストラクタ
     public ReviewData(String name){
         latLngArray = new ArrayList<LatLng>();
         markerArray = new ArrayList<MarkerOptions>();
@@ -64,7 +71,7 @@ public final class ReviewData implements Serializable{
         PolylineOptions plo = new PolylineOptions();
         for(int i = 0; i < currentIndex; i++) plo.add(latLngArray.get(i));
         //デバッグ
-        System.out.println(plo.toString());
+        out.println(plo.toString());
         return plo;
     }
     public ArrayList<MarkerOptions> getMarkerOptions(){
@@ -112,10 +119,14 @@ public final class ReviewData implements Serializable{
         try {
             // Androidアプリ用パス取得メソッド #Activity.class
             FileOutputStream fos = activity.openFileOutput( dataID + ".dat", MODE_PRIVATE);
+            FileOutputStream fos2 = activity.openFileOutput("filename", MODE_PRIVATE|MODE_APPEND);  //保存したファイル名を残しておくファイル
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(fos2,"UTF-8"));
             // オブジェクトのシリアライズ
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this);
             oos.close();
+            writer.append(dataID+"\n");
+            writer.close();
             return true;
         }catch (Exception ex){
             ex.printStackTrace();
