@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.doubutsunoyakata.toyohashicharimap.input.MapsActivity;
+import com.doubutsunoyakata.toyohashicharimap.input.test;
 
 public class MainActivity extends AppCompatActivity {
     Button input;
@@ -63,5 +64,21 @@ public class MainActivity extends AppCompatActivity {
         upload = (Button) findViewById(R.id.Upload);
 
         history = (Button) findViewById(R.id.History);
+        /*
+        ファイルの読み込みは以下のようなコードを使えばいけることが確認できた
+        rd = new ReviewData("Dummy ID");
+            try {
+                in = openFileInput("filename"); //LOCAL_FILE = "log.txt";
+
+                BufferedReader reader= new BufferedReader(new InputStreamReader(in,"UTF-8"));
+                while( (lineBuffer = reader.readLine()) != null ){
+                    mTextMessage.setText(lineBuffer);
+                    line = lineBuffer;
+                }
+            } catch (IOException e) {
+                // TODO 自動生成された catch ブロック
+                e.printStackTrace();
+            }
+         */
     }
 }
