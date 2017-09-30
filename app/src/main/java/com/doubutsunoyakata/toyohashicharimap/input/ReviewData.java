@@ -27,6 +27,7 @@ public final class ReviewData implements Serializable{
     private final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
+    private String review = null; //レビューの内容
 
     private static final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//時刻用フォーマット
 
@@ -73,6 +74,7 @@ public final class ReviewData implements Serializable{
         return mo;
     }
     public int getCurrentIndex(){ return currentIndex; }
+    public String getReview(){ return review; }
 
     //セッター
     public void addLatLng(LatLng p){
@@ -81,6 +83,7 @@ public final class ReviewData implements Serializable{
         latLngArray.add(currentIndex, p);
         markerArray.add(currentIndex++, m);
     }
+    public void setReview(String r) { review = r; }
 
     //インデックスのアンドゥ
     public void undoCurrentIndex(){
