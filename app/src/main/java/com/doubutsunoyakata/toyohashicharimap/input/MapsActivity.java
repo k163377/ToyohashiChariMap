@@ -128,16 +128,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //投稿ボタン
                 dialog.setPositiveButton("投稿", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        //後で関数として書き換え
+                        rd.setReview(editView.getText().toString());
+                        //rd.outputSerialize(MapsActivity.this);
+                        //投稿はまだ実装しない
                     }
                 });
                 //下書き保存
                 dialog.setNeutralButton("下書き保存", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int whichButton){
-                    }
-                });
-                // キャンセルボタンの設定
-                dialog.setNegativeButton("マップに戻る", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //後で関数として書き換え
+                        rd.setReview(editView.getText().toString());
+                        //rd.outputSerialize(MapsActivity.this);
                     }
                 });
                 dialog.show();
