@@ -14,7 +14,7 @@ import com.doubutsunoyakata.toyohashicharimap.input.MapsActivity;
 
 public class MainActivity extends AppCompatActivity {
     Button input;
-    Button serch;
+    Button search;
     Button history;
     Button upload;
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        serch = (Button) findViewById(R.id.Serch);
+        search = (Button) findViewById(R.id.Search);
 
         upload = (Button) findViewById(R.id.Upload);
 

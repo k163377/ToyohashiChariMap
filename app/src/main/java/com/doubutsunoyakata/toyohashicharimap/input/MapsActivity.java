@@ -21,6 +21,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -123,6 +128,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+
+
         rd = new ReviewData("Dummy ID");
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -140,6 +148,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        rd = new ReviewData("test");
 
         Location l = getLastKnownLocation();
         LatLng p;
@@ -151,6 +160,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //取れなかったら豊橋駅に視点を移す
             p = new LatLng(34.7628819, 137.3819014);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p, 15));
+        }
+
+        //タップされた位置の取得
+        if (mMap != null) {
+            mMap.setOnMapClickListener(new OnMapClickListener() {
+                MarkerOptions options = new MarkerOptions();
+                @Override
+                public void onMapClick(LatLng point) {
+                    // TODO Auto-generated method stub
+                    options.position(point);
+                    options.title("テストMaker");
+                    options.snippet(String.valueOf(point.latitude)+","+String.valueOf(point.longitude));
+                    mMap.addMarker(options);
+                    rd.addLatLng(point);
+
+                }
+            });
         }
     }
 }

@@ -18,10 +18,10 @@
             android:text="input" />
 
         <Button
-            android:id="@+id/Serch"
+            android:id="@+id/Search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="serch"/>
+            android:text="search" />
 
         <Button
             android:id="@+id/Upload"
