@@ -30,6 +30,7 @@ public final class ReviewData implements Serializable{
     // transientをつけると、シリアライズ時に保存されない
     // シリアライズの確認用でとりあえず入れているが、保存方法を考えないといけない...
     private transient final ArrayList<LatLng> latLngArray;//座標の行列
+    private double[][] latLngDoubleArray;
     private transient final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
@@ -82,6 +83,7 @@ public final class ReviewData implements Serializable{
     }
     public int getCurrentIndex(){ return currentIndex; }
     public String getReview(){ return review; }
+    public double[][] getLatLngDoubleArray(){ return latLngDoubleArray; }
 
     //セッター
     public void addLatLng(LatLng p){
@@ -116,6 +118,11 @@ public final class ReviewData implements Serializable{
      * @return シリアライズ成功の可否
      */
     public boolean outputSerialize(final Activity activity) {
+        latLngDoubleArray = new double[2][latLngArray.size()];
+        for(int i = 0; i < latLngArray.size(); i++){
+            latLngDoubleArray[0][i] = latLngArray.get(i).latitude;
+            latLngDoubleArray[0][i] = latLngArray.get(i).longitude;
+        }
         try {
             // Androidアプリ用パス取得メソッド #Activity.class
             FileOutputStream fos = activity.openFileOutput( dataID + ".dat", MODE_PRIVATE);
@@ -147,10 +154,15 @@ public final class ReviewData implements Serializable{
             ReviewData rd = (ReviewData)ois.readObject();
             ois.close();
             if (dataID.equals(rd.dataID)) {
+                double[][] points = rd.getLatLngDoubleArray();
+
+                for(int i = 0; i < points[0].length; i++){
+                    rd.addLatLng(new LatLng(points[0][i], points[1][i]));
+                }
+
                 return rd;
             }
-            else
-                throw new IOException();
+            else throw new IOException();
         }catch (Exception ex){
             ex.printStackTrace();
             return null;
