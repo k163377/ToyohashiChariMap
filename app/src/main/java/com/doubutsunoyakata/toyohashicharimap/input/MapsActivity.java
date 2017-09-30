@@ -1,5 +1,6 @@
 package com.doubutsunoyakata.toyohashicharimap.input;
 
+import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -7,9 +8,11 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.doubutsunoyakata.toyohashicharimap.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,8 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Timer timer = null;
 
     //レイアウト
-    Button button;
-    boolean isRecording = false;
+    Button ConfirmButton;
 
     //データ
     ReviewData rd;
@@ -112,26 +114,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener(){
+        rd = new ReviewData("Dummy ID");
+
+        ConfirmButton = (Button) findViewById(R.id.ConfirmButton);
+        ConfirmButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                if(!isRecording){
-                    startRecording();
-                    button.setText("StopRecording");
-                    isRecording = true;
-                } else {
-                    stopRecording();
-                    button.setText("StartRecording");
-                    isRecording = false;
-                }
+            public void onClick(View v){
+                final EditText editView = new EditText(MapsActivity.this);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MapsActivity.this);
+                dialog.setTitle("レビューを入力");
+                dialog.setView(editView);
+
+                //投稿ボタン
+                dialog.setPositiveButton("投稿", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+                //下書き保存
+                dialog.setNeutralButton("下書き保存", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int whichButton){
+                    }
+                });
+                // キャンセルボタンの設定
+                dialog.setNegativeButton("マップに戻る", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+                dialog.show();
             }
         });
-
-
-
-
-        rd = new ReviewData("Dummy ID");
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     }
