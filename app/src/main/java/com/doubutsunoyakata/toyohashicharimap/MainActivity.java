@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.doubutsunoyakata.toyohashicharimap.input.HistoryActivity;
 import com.doubutsunoyakata.toyohashicharimap.input.MapsActivity;
-import com.doubutsunoyakata.toyohashicharimap.input.test;
 
 public class MainActivity extends AppCompatActivity {
     Button input;
@@ -64,21 +64,22 @@ public class MainActivity extends AppCompatActivity {
         upload = (Button) findViewById(R.id.Upload);
 
         history = (Button) findViewById(R.id.History);
-        /*
-        ファイルの読み込みは以下のようなコードを使えばいけることが確認できた
-        rd = new ReviewData("Dummy ID");
-            try {
-                in = openFileInput("filename"); //LOCAL_FILE = "log.txt";
-
-                BufferedReader reader= new BufferedReader(new InputStreamReader(in,"UTF-8"));
-                while( (lineBuffer = reader.readLine()) != null ){
-                    mTextMessage.setText(lineBuffer);
-                    line = lineBuffer;
+        history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {//GPSからの入力への移行
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {//権限がまだ無い場合
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {//明示的に権限が拒否されていた時
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    } else {//まだ聞いてなかったとき
+                        //与えても良いか聞く、onRequestPermissionsResultが答えを受ける
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    }
+                }else{
+                    Intent intent[] = new Intent[1];
+                    intent[0] = new Intent(MainActivity.this, HistoryActivity.class);
+                    startActivities(intent);
                 }
-            } catch (IOException e) {
-                // TODO 自動生成された catch ブロック
-                e.printStackTrace();
             }
-         */
+        });
     }
 }

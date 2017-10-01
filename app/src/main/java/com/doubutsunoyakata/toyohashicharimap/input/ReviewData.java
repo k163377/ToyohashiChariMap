@@ -121,19 +121,15 @@ public final class ReviewData implements Serializable{
         latLngDoubleArray = new double[2][latLngArray.size()];
         for(int i = 0; i < latLngArray.size(); i++){
             latLngDoubleArray[0][i] = latLngArray.get(i).latitude;
-            latLngDoubleArray[0][i] = latLngArray.get(i).longitude;
+            latLngDoubleArray[1][i] = latLngArray.get(i).longitude;
         }
         try {
             // Androidアプリ用パス取得メソッド #Activity.class
             FileOutputStream fos = activity.openFileOutput( dataID + ".dat", MODE_PRIVATE);
-            FileOutputStream fos2 = activity.openFileOutput("filename", MODE_PRIVATE|MODE_APPEND);  //保存したファイル名を残しておくファイル
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(fos2,"UTF-8"));
             // オブジェクトのシリアライズ
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this);
             oos.close();
-            writer.append(dataID+"\n");
-            writer.close();
             return true;
         }catch (Exception ex){
             ex.printStackTrace();
