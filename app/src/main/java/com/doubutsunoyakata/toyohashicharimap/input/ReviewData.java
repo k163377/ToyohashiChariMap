@@ -34,7 +34,7 @@ public final class ReviewData implements Serializable{
     private transient final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
-    private String review = null; //レビューの内容
+    private String review; //レビューの内容
 
     // "/"が入るとディレクトリとして処理されてしまい、エラーとなるので"-"で区切るようにした
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");//時刻用フォーマット
@@ -46,6 +46,7 @@ public final class ReviewData implements Serializable{
         currentIndex = 0;
         date = new Date( System.currentTimeMillis());//現在時間を取得
         dataID = name + "_" + df.format(date);
+        review = "";
     }
     /**
      * ファイルからデシリアライズして読み取るコンストラクタ
@@ -59,6 +60,7 @@ public final class ReviewData implements Serializable{
         this.markerArray = rd.markerArray;
         this.currentIndex = rd.currentIndex;
         this.date = rd.date;
+        this.review = rd.review;
     }
 
     //ゲッター
@@ -76,7 +78,6 @@ public final class ReviewData implements Serializable{
         return plo;
     }
     public ArrayList<MarkerOptions> getMarkerOptions(){
-        if(currentIndex == 0) return null;
         ArrayList<MarkerOptions> mo = new ArrayList<MarkerOptions>();
         for(int i = 0; i < currentIndex; i++) mo.add(markerArray.get(i));
         return mo;
@@ -90,7 +91,8 @@ public final class ReviewData implements Serializable{
         MarkerOptions m = new MarkerOptions();
         m.position(p);
         latLngArray.add(currentIndex, p);
-        markerArray.add(currentIndex++, m);
+        markerArray.add(currentIndex, m);
+        currentIndex++;
     }
     public void setReview(String r) { review = r; }
 
@@ -121,19 +123,15 @@ public final class ReviewData implements Serializable{
         latLngDoubleArray = new double[2][latLngArray.size()];
         for(int i = 0; i < latLngArray.size(); i++){
             latLngDoubleArray[0][i] = latLngArray.get(i).latitude;
-            latLngDoubleArray[0][i] = latLngArray.get(i).longitude;
+            latLngDoubleArray[1][i] = latLngArray.get(i).longitude;
         }
         try {
             // Androidアプリ用パス取得メソッド #Activity.class
             FileOutputStream fos = activity.openFileOutput( dataID + ".dat", MODE_PRIVATE);
-            FileOutputStream fos2 = activity.openFileOutput("filename", MODE_PRIVATE|MODE_APPEND);  //保存したファイル名を残しておくファイル
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(fos2,"UTF-8"));
             // オブジェクトのシリアライズ
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this);
             oos.close();
-            writer.append(dataID+"\n");
-            writer.close();
             return true;
         }catch (Exception ex){
             ex.printStackTrace();
