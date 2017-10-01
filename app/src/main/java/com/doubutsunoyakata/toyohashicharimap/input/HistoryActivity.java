@@ -75,13 +75,13 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         showAll = (Button) findViewById(R.id.showAll);
-        showAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent[] = new Intent[1];
-                intent[0] = new Intent(HistoryActivity.this, HistoryMapActivity.class);
-                startActivities(intent);
-            }
-        });
+//        showAll.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent[] = new Intent[1];
+//                intent[0] = new Intent(HistoryActivity.this, HistoryMapActivity.class);
+//                startActivities(intent);
+//            }
+//        });
     }
 }
