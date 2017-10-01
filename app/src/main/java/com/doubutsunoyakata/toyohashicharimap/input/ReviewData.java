@@ -166,4 +166,28 @@ public final class ReviewData implements Serializable{
             return null;
         }
     }
+
+    public static ReviewData fileDeserialize(final Activity activity, final String filename) {
+        try {
+            // Androidアプリ用パス取得メソッド #Activity.class
+            FileInputStream fis = activity.openFileInput(filename);
+            // オブジェクトのデシリアライズ
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            ReviewData rd = (ReviewData)ois.readObject();
+            ois.close();
+            if (filename.equals(rd.dataID)) {
+                double[][] points = rd.getLatLngDoubleArray();
+
+                for(int i = 0; i < points[0].length; i++){
+                    rd.addLatLng(new LatLng(points[0][i], points[1][i]));
+                }
+
+                return rd;
+            }
+            else throw new IOException();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
 }
