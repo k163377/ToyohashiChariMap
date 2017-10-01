@@ -34,7 +34,7 @@ public final class ReviewData implements Serializable{
     private transient final ArrayList<MarkerOptions> markerArray;//マーカーのリスト
     private int currentIndex;//入力の取り消し機能のため、今読んでいる場所を記憶
     private Date date;  // レビュー作成時の時刻
-    private String review = null; //レビューの内容
+    private String review; //レビューの内容
 
     // "/"が入るとディレクトリとして処理されてしまい、エラーとなるので"-"で区切るようにした
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");//時刻用フォーマット
@@ -46,6 +46,7 @@ public final class ReviewData implements Serializable{
         currentIndex = 0;
         date = new Date( System.currentTimeMillis());//現在時間を取得
         dataID = name + "_" + df.format(date);
+        review = "";
     }
     /**
      * ファイルからデシリアライズして読み取るコンストラクタ
@@ -59,6 +60,7 @@ public final class ReviewData implements Serializable{
         this.markerArray = rd.markerArray;
         this.currentIndex = rd.currentIndex;
         this.date = rd.date;
+        this.review = rd.review;
     }
 
     //ゲッター
@@ -76,7 +78,6 @@ public final class ReviewData implements Serializable{
         return plo;
     }
     public ArrayList<MarkerOptions> getMarkerOptions(){
-        if(currentIndex == 0) return null;
         ArrayList<MarkerOptions> mo = new ArrayList<MarkerOptions>();
         for(int i = 0; i < currentIndex; i++) mo.add(markerArray.get(i));
         return mo;
@@ -90,7 +91,8 @@ public final class ReviewData implements Serializable{
         MarkerOptions m = new MarkerOptions();
         m.position(p);
         latLngArray.add(currentIndex, p);
-        markerArray.add(currentIndex++, m);
+        markerArray.add(currentIndex, m);
+        currentIndex++;
     }
     public void setReview(String r) { review = r; }
 
